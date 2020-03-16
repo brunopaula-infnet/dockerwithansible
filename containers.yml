@@ -1,0 +1,33 @@
+---
+  - 
+    hosts: dockerpool
+
+    tasks:
+      - name: "instalar o pip"
+        yum:
+          name=python-pip
+          state=latest
+
+      - name: "instalar o docker-py"
+        pip:
+          name=docker-py
+          state=present
+
+      - name: "execute o container de banco de dados"
+        docker_container:
+          name: mysql
+          image: mariadb
+          env:
+            MYSQL_ROOT_PASSWORD: infnet*2020
+            MYSQL_DATABASE: glpidb
+            MYSQL_USER: glpi_user
+            MYSQL_PASSWORD: glpi
+
+      -  name: Instalar Imagem diouxx/glpi"
+         docker_container:
+           name: glpi
+           image: diouxx/glpi
+           links:
+             - "mysql:mariadb"
+           ports:
+             - "80:80"
